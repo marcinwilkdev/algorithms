@@ -14,5 +14,5 @@ fn main() {
         .collect::<Vec<_>>()
         .join(" ");
 
-    println!("{}", numbers);
+    println!("{} {}", n, numbers);
 }
