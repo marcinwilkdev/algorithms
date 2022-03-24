@@ -110,7 +110,6 @@ impl Sorter for MergeSort {
     /// Examples:
     /// ```
     /// use algorithms::prelude::*;
-    /// use algorithms::merge_sort::MergeSort;
     ///
     /// let mut slice = [1, 8, 2, 3, 9, 5];
     ///
@@ -129,7 +128,6 @@ impl BenchmarkingSorter for MergeSort {
     /// Examples:
     /// ```
     /// use algorithms::prelude::*;
-    /// use algorithms::merge_sort::MergeSort;
     /// use algorithms::benchmarking::StandardBenchmarker;
     ///
     /// let mut benchmarker = StandardBenchmarker::default();

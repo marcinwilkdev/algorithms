@@ -13,7 +13,6 @@ impl Sorter for InsertionSort {
     /// Examples:
     /// ```
     /// use algorithms::prelude::*;
-    /// use algorithms::insertion_sort::InsertionSort;
     ///
     /// let mut slice = [1, 8, 2, 3, 9, 5];
     ///
@@ -42,7 +41,6 @@ impl BenchmarkingSorter for InsertionSort {
     /// Examples:
     /// ```
     /// use algorithms::prelude::*;
-    /// use algorithms::insertion_sort::InsertionSort;
     /// use algorithms::benchmarking::StandardBenchmarker;
     ///
     /// let mut benchmarker = StandardBenchmarker::default();

@@ -81,7 +81,6 @@ impl Sorter for QuickSort {
     /// Examples:
     /// ```
     /// use algorithms::prelude::*;
-    /// use algorithms::quick_sort::QuickSort;
     ///
     /// let mut slice = [1, 8, 2, 3, 9, 5];
     ///

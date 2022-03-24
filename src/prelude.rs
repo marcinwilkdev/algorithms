@@ -2,6 +2,9 @@
 //! sorting traits.
 
 pub use crate::benchmarking::Benchmark;
+pub use crate::insertion_sort::InsertionSort;
+pub use crate::merge_sort::MergeSort;
+pub use crate::quick_sort::QuickSort;
 
 /// Trait for sorting algorithms.
 
