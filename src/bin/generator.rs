@@ -1,5 +1,6 @@
-use rand::prelude::*;
 use std::env;
+
+use algorithms::generator::*;
 
 fn main() {
     let mode = env::args()
@@ -13,31 +14,9 @@ fn main() {
         .expect("n has to be integer");
 
     let numbers = match &mode[..] {
-        "rand" => (0..n)
-            .map(|_| rand::thread_rng().gen_range(0..2 * n - 1))
-            .collect(),
-        "asc" => {
-            let mut numbers = (0..n)
-                .map(|_| rand::thread_rng().gen_range(0..10))
-                .collect::<Vec<_>>();
-
-            for i in 0..numbers.len() - 1 {
-                numbers[i + 1] += numbers[i];
-            }
-
-            numbers
-        }
-        "desc" => {
-            let mut numbers = (0..n)
-                .map(|_| rand::thread_rng().gen_range(0..10))
-                .collect::<Vec<usize>>();
-
-            for i in 0..numbers.len() - 1 {
-                numbers[i + 1] += numbers[i];
-            }
-
-            numbers.into_iter().rev().collect()
-        }
+        "rand" => RandomGenerator::generate(n),
+        "asc" => AscendingGenerator::generate(n),
+        "desc" => DescendingGenerator::generate(n),
         _ => panic!("wrong generator mode"),
     };
 
