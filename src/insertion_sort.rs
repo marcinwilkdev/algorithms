@@ -80,15 +80,25 @@ impl BenchmarkingSorter for InsertionSort {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tests::*;
 
     #[test]
-    fn insertion_sort_zero_size_works() {
-        let mut slice: [(); 0] = [];
+    fn insertion_sort_basic_sorting_test() {
+        basic_sorting_test::<InsertionSort>();
+    }
 
-        InsertionSort::sort(&mut slice);
+    #[test]
+    fn insertion_sort_empty_sorting_test() {
+        empty_sorting_test::<InsertionSort>();
+    }
 
-        let expected: [(); 0] = [];
+    #[test]
+    fn insertion_sort_sorted_sorting_test() {
+        sorted_sorting_test::<InsertionSort>();
+    }
 
-        assert_eq!(expected, slice);
+    #[test]
+    fn insertion_sort_sorted_backwards_sorting_test() {
+        sorted_backwards_sorting_test::<InsertionSort>();
     }
 }
