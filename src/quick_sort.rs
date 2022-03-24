@@ -58,3 +58,29 @@ impl Sorter for QuickSort {
         QuickSort::quick_sort(slice);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::tests::*;
+
+    #[test]
+    fn quick_sort_basic_sorting_test() {
+        basic_sorting_test::<QuickSort>();
+    }
+
+    #[test]
+    fn quick_sort_empty_sorting_test() {
+        empty_sorting_test::<QuickSort>();
+    }
+
+    #[test]
+    fn quick_sort_sorted_sorting_test() {
+        sorted_sorting_test::<QuickSort>();
+    }
+
+    #[test]
+    fn quick_sort_sorted_backwards_sorting_test() {
+        sorted_backwards_sorting_test::<QuickSort>();
+    }
+}
