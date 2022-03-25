@@ -27,6 +27,9 @@ impl DualPivotQuicksort {
         let mut left_pivot = slice[0];
         let mut right_pivot = slice[slice.len() - 1];
 
+        let mut small_count = 0;
+        let mut large_count = 0;
+
         if left_pivot > right_pivot {
             slice.swap(0, slice.len() - 1);
 
@@ -40,17 +43,40 @@ impl DualPivotQuicksort {
         let mut i = 1;
 
         while i < second_part_index {
-            if slice[i] < left_pivot {
-                first_part_index += 1;
-                slice.swap(first_part_index, i);
-            } else if slice[i] > right_pivot {
-                second_part_index -= 1;
-
-                while slice[second_part_index] > right_pivot {
+            if large_count > small_count {
+                if slice[i] > right_pivot {
                     second_part_index -= 1;
-                }
 
-                slice.swap(second_part_index, i);
+                    while slice[second_part_index] > right_pivot {
+                        second_part_index -= 1;
+                    }
+
+                    slice.swap(second_part_index, i);
+
+                    large_count += 1;
+                } else if slice[i] < left_pivot {
+                    first_part_index += 1;
+                    slice.swap(first_part_index, i);
+
+                    small_count += 1;
+                }
+            } else {
+                if slice[i] < left_pivot {
+                    first_part_index += 1;
+                    slice.swap(first_part_index, i);
+
+                    small_count += 1;
+                } else if slice[i] > right_pivot {
+                    second_part_index -= 1;
+
+                    while slice[second_part_index] > right_pivot {
+                        second_part_index -= 1;
+                    }
+
+                    slice.swap(second_part_index, i);
+
+                    large_count += 1;
+                }
             }
 
             i += 1;
@@ -92,6 +118,9 @@ impl DualPivotQuicksort {
         let mut left_pivot = slice[0];
         let mut right_pivot = slice[slice.len() - 1];
 
+        let mut small_count = 0;
+        let mut large_count = 0;
+
         if left_pivot > right_pivot {
             slice.swap(0, slice.len() - 1);
 
@@ -105,23 +134,60 @@ impl DualPivotQuicksort {
         let mut i = 1;
 
         while i < second_part_index {
-            benchmark.add_cmp();
-            if slice[i] < left_pivot {
-                benchmark.add_swap();
-                first_part_index += 1;
-                slice.swap(first_part_index, i);
-            } else if slice[i] > right_pivot {
+            if large_count > small_count {
                 benchmark.add_cmp();
-                benchmark.add_swap();
-                second_part_index -= 1;
-
-                while slice[second_part_index] > right_pivot {
+                if slice[i] > right_pivot {
                     second_part_index -= 1;
-                }
 
-                slice.swap(second_part_index, i);
+                    while slice[second_part_index] > right_pivot {
+                        second_part_index -= 1;
+
+                        benchmark.add_cmp();
+                    }
+                    benchmark.add_cmp();
+
+                    slice.swap(second_part_index, i);
+                    benchmark.add_swap();
+
+                    large_count += 1;
+                } else if slice[i] < left_pivot {
+                    first_part_index += 1;
+                    slice.swap(first_part_index, i);
+                    benchmark.add_swap();
+
+                    small_count += 1;
+
+                    benchmark.add_cmp();
+                } else {
+                    benchmark.add_cmp();
+                }
             } else {
                 benchmark.add_cmp();
+                if slice[i] < left_pivot {
+                    first_part_index += 1;
+                    slice.swap(first_part_index, i);
+                    benchmark.add_swap();
+
+                    small_count += 1;
+                } else if slice[i] > right_pivot {
+                    second_part_index -= 1;
+
+                    while slice[second_part_index] > right_pivot {
+                        second_part_index -= 1;
+                        benchmark.add_cmp();
+                    }
+
+                    benchmark.add_cmp();
+
+                    slice.swap(second_part_index, i);
+                    benchmark.add_swap();
+
+                    large_count += 1;
+
+                    benchmark.add_cmp();
+                } else {
+                    benchmark.add_cmp();
+                }
             }
 
             i += 1;
@@ -170,7 +236,7 @@ impl BenchmarkingSorter for DualPivotQuicksort {
     ///
     /// let stats = benchmarker.get_stats();
     ///
-    /// assert_eq!(4, stats.comparisons);
+    /// assert_eq!(6, stats.comparisons);
     /// assert_eq!(7, stats.swaps);
     /// ```
     fn sort_with_benchmark<T: Ord + Copy>(slice: &mut [T], benchmark: &mut impl Benchmark) {
