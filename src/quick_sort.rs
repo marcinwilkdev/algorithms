@@ -3,7 +3,7 @@
 use crate::prelude::*;
 
 /// Struct implementing `Sorter` + `BenchmarkingSorter` using quick sort
-/// to sort items.
+/// to sort items.I t uses Lomuto partition scheme choosing last item as pivot.
 pub struct QuickSort;
 
 impl QuickSort {
