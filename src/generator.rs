@@ -1,6 +1,7 @@
 //! Generator trait with few implementations helpful with testing algorithms.
 
 use rand::prelude::*;
+use rand_pcg::Pcg64Mcg;
 
 /// Main trait which has to be implemented by every data generator.
 pub trait Generator {
@@ -13,7 +14,7 @@ pub struct RandomGenerator;
 impl Generator for RandomGenerator {
     fn generate(n: usize) -> Vec<u32> {
         (0..n)
-            .map(|_| rand::thread_rng().gen_range(0..2 * n - 1))
+            .map(|_| Pcg64Mcg::from_entropy().gen_range(0..2 * n - 1))
             .map(|number| number.try_into().expect("value range too big"))
             .collect()
     }
@@ -26,7 +27,7 @@ pub struct AscendingGenerator;
 impl Generator for AscendingGenerator {
     fn generate(n: usize) -> Vec<u32> {
         let mut numbers = (0..n)
-            .map(|_| rand::thread_rng().gen_range(0..10))
+            .map(|_| Pcg64Mcg::from_entropy().gen_range(0..10))
             .collect::<Vec<_>>();
 
         for i in 0..numbers.len() - 1 {
@@ -44,7 +45,7 @@ pub struct DescendingGenerator;
 impl Generator for DescendingGenerator {
     fn generate(n: usize) -> Vec<u32> {
         let mut numbers = (0..n)
-            .map(|_| rand::thread_rng().gen_range(0..10))
+            .map(|_| Pcg64Mcg::from_entropy().gen_range(0..10))
             .map(|number| number.try_into().expect("value range too big"))
             .collect::<Vec<u32>>();
 
