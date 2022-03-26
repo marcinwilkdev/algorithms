@@ -24,71 +24,81 @@ impl DualPivotQuicksort {
     }
 
     fn partition<T: Ord + Copy>(slice: &mut [T]) -> (usize, usize) {
-        let mut left_pivot = slice[0];
-        let mut right_pivot = slice[slice.len() - 1];
-
-        let mut small_count = 0;
-        let mut large_count = 0;
-
-        if left_pivot > right_pivot {
+        if slice[0] > slice[slice.len() - 1] {
             slice.swap(0, slice.len() - 1);
-
-            left_pivot = slice[0];
-            right_pivot = slice[slice.len() - 1];
         }
 
-        let mut first_part_index = 0;
-        let mut second_part_index = slice.len() - 1;
+        let left_pivot = slice[0];
+        let right_pivot = slice[slice.len() - 1];
 
-        let mut i = 1;
+        let mut next_smaller = 1;
+        let mut next_larger = slice.len() - 2;
 
-        while i < second_part_index {
-            if large_count > small_count {
-                if slice[i] > right_pivot {
-                    second_part_index -= 1;
+        let mut smaller_count = 0;
+        let mut larger_count = 0;
 
-                    while slice[second_part_index] > right_pivot {
-                        second_part_index -= 1;
+        let mut curr = 1;
+
+        while curr <= next_larger {
+            if larger_count > smaller_count {
+                if slice[curr] > right_pivot {
+                    while slice[next_larger] > right_pivot && next_larger > curr {
+                        next_larger -= 1;
                     }
 
-                    slice.swap(second_part_index, i);
+                    slice.swap(curr, next_larger);
 
-                    large_count += 1;
-                } else if slice[i] < left_pivot {
-                    first_part_index += 1;
-                    slice.swap(first_part_index, i);
+                    if slice[curr] < left_pivot {
+                        slice.swap(curr, next_smaller);
+                        next_smaller += 1;
+                    }
 
-                    small_count += 1;
+                    next_larger -= 1;
+
+                    larger_count += 1;
+                } else if slice[curr] < left_pivot {
+                    slice.swap(curr, next_smaller);
+                    next_smaller += 1;
+
+                    smaller_count += 1;
                 }
             } else {
-                if slice[i] < left_pivot {
-                    first_part_index += 1;
-                    slice.swap(first_part_index, i);
+                if slice[curr] < left_pivot {
+                    slice.swap(curr, next_smaller);
+                    next_smaller += 1;
 
-                    small_count += 1;
-                } else if slice[i] > right_pivot {
-                    second_part_index -= 1;
-
-                    while slice[second_part_index] > right_pivot {
-                        second_part_index -= 1;
+                    smaller_count += 1;
+                } else if slice[curr] > right_pivot {
+                    while slice[next_larger] > right_pivot && next_larger > curr {
+                        next_larger -= 1;
                     }
 
-                    slice.swap(second_part_index, i);
+                    slice.swap(curr, next_larger);
 
-                    large_count += 1;
+                    if slice[curr] < left_pivot {
+                        slice.swap(curr, next_smaller);
+                        next_smaller += 1;
+                    }
+
+                    next_larger -= 1;
+
+                    larger_count += 1;
                 }
             }
 
-            i += 1;
+            curr += 1;
         }
 
-        slice.swap(first_part_index, 0);
-        slice.swap(second_part_index, slice.len() - 1);
+        slice.swap(next_smaller - 1, 0);
+        slice.swap(next_larger + 1, slice.len() - 1);
 
-        (first_part_index, second_part_index)
+        (next_smaller - 1, next_larger + 1)
     }
 
-    fn quick_sort_with_benchmark<T: Ord + Copy>(slice: &mut [T], benchmark: &mut impl Benchmark) {
+    pub fn quick_sort_with_benchmark<T: Ord + Copy>(
+        slice: &mut [T],
+        benchmark: &mut impl Benchmark,
+    ) {
         if slice.len() <= 1 {
             return;
         }
@@ -98,10 +108,12 @@ impl DualPivotQuicksort {
 
         DualPivotQuicksort::quick_sort_with_benchmark(&mut slice[..left_pivot_index], benchmark);
 
-        DualPivotQuicksort::quick_sort_with_benchmark(
-            &mut slice[left_pivot_index + 1..right_pivot_index],
-            benchmark,
-        );
+        if left_pivot_index + 1 < right_pivot_index {
+            DualPivotQuicksort::quick_sort_with_benchmark(
+                &mut slice[left_pivot_index + 1..right_pivot_index],
+                benchmark,
+            );
+        }
 
         if right_pivot_index < slice.len() - 1 {
             DualPivotQuicksort::quick_sort_with_benchmark(
@@ -115,90 +127,90 @@ impl DualPivotQuicksort {
         slice: &mut [T],
         benchmark: &mut impl Benchmark,
     ) -> (usize, usize) {
-        let mut left_pivot = slice[0];
-        let mut right_pivot = slice[slice.len() - 1];
-
-        let mut small_count = 0;
-        let mut large_count = 0;
-
-        if left_pivot > right_pivot {
+        if slice[0] > slice[slice.len() - 1] {
             slice.swap(0, slice.len() - 1);
-
-            left_pivot = slice[0];
-            right_pivot = slice[slice.len() - 1];
         }
 
-        let mut first_part_index = 0;
-        let mut second_part_index = slice.len() - 1;
+        let left_pivot = slice[0];
+        let right_pivot = slice[slice.len() - 1];
 
-        let mut i = 1;
+        let mut next_smaller = 1;
+        let mut next_larger = slice.len() - 2;
 
-        while i < second_part_index {
-            if large_count > small_count {
-                benchmark.add_cmp();
-                if slice[i] > right_pivot {
-                    second_part_index -= 1;
+        let mut smaller_count = 0;
+        let mut larger_count = 0;
 
-                    while slice[second_part_index] > right_pivot {
-                        second_part_index -= 1;
+        let mut curr = 1;
 
-                        benchmark.add_cmp();
+        while curr <= next_larger {
+            benchmark.add_cmp();
+            if larger_count > smaller_count {
+                if slice[curr] > right_pivot {
+                    while slice[next_larger] > right_pivot && next_larger > curr {
+                        next_larger -= 1;
                     }
-                    benchmark.add_cmp();
 
-                    slice.swap(second_part_index, i);
+                    slice.swap(curr, next_larger);
                     benchmark.add_swap();
 
-                    large_count += 1;
-                } else if slice[i] < left_pivot {
-                    first_part_index += 1;
-                    slice.swap(first_part_index, i);
-                    benchmark.add_swap();
+                    if slice[curr] < left_pivot {
+                        slice.swap(curr, next_smaller);
+                        next_smaller += 1;
+                    }
 
-                    small_count += 1;
+                    next_larger -= 1;
 
+                    larger_count += 1;
+                } else if slice[curr] < left_pivot {
                     benchmark.add_cmp();
+                    slice.swap(curr, next_smaller);
+                    benchmark.add_swap();
+                    next_smaller += 1;
+
+                    smaller_count += 1;
                 } else {
                     benchmark.add_cmp();
                 }
             } else {
-                benchmark.add_cmp();
-                if slice[i] < left_pivot {
-                    first_part_index += 1;
-                    slice.swap(first_part_index, i);
+                if slice[curr] < left_pivot {
+                    slice.swap(curr, next_smaller);
                     benchmark.add_swap();
+                    next_smaller += 1;
 
-                    small_count += 1;
-                } else if slice[i] > right_pivot {
-                    second_part_index -= 1;
-
-                    while slice[second_part_index] > right_pivot {
-                        second_part_index -= 1;
-                        benchmark.add_cmp();
+                    smaller_count += 1;
+                } else if slice[curr] > right_pivot {
+                    benchmark.add_cmp();
+                    while slice[next_larger] > right_pivot && next_larger > curr {
+                        next_larger -= 1;
                     }
 
-                    benchmark.add_cmp();
-
-                    slice.swap(second_part_index, i);
+                    slice.swap(curr, next_larger);
                     benchmark.add_swap();
 
-                    large_count += 1;
+                    if slice[curr] < left_pivot {
+                        slice.swap(curr, next_smaller);
+                        benchmark.add_swap();
+                        next_smaller += 1;
+                    }
 
-                    benchmark.add_cmp();
+                    next_larger -= 1;
+
+                    larger_count += 1;
                 } else {
                     benchmark.add_cmp();
                 }
             }
 
-            i += 1;
+            curr += 1;
         }
 
-        benchmark.add_swap();
-        benchmark.add_swap();
-        slice.swap(first_part_index, 0);
-        slice.swap(second_part_index, slice.len() - 1);
+        slice.swap(next_smaller - 1, 0);
+        slice.swap(next_larger + 1, slice.len() - 1);
 
-        (first_part_index, second_part_index)
+        benchmark.add_swap();
+        benchmark.add_swap();
+
+        (next_smaller - 1, next_larger + 1)
     }
 }
 
