@@ -34,6 +34,7 @@ fn main() {
         "insertion" => InsertionSort::sort_with_benchmark(&mut numbers, &mut benchmark),
         "merge" => MergeSort::sort_with_benchmark(&mut numbers, &mut benchmark),
         "quick" => QuickSort::sort_with_benchmark(&mut numbers, &mut benchmark),
+        "dual_pivot" => DualPivotQuicksort::sort_with_benchmark(&mut numbers, &mut benchmark),
         _ => panic!("wrong program mode"),
     }
 
@@ -51,7 +52,7 @@ fn main() {
     let mut sorted = true;
 
     for i in 0..numbers.len() - 1 {
-        if numbers[i] > numbers[i+1] {
+        if numbers[i] > numbers[i + 1] {
             sorted = false;
             break;
         }
