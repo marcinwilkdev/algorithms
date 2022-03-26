@@ -248,7 +248,7 @@ impl BenchmarkingSorter for DualPivotQuicksort {
     ///
     /// let stats = benchmarker.get_stats();
     ///
-    /// assert_eq!(6, stats.comparisons);
+    /// assert_eq!(4, stats.comparisons);
     /// assert_eq!(7, stats.swaps);
     /// ```
     fn sort_with_benchmark<T: Ord + Copy>(slice: &mut [T], benchmark: &mut impl Benchmark) {
