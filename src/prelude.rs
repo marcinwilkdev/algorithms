@@ -6,6 +6,7 @@ pub use crate::insertion_sort::InsertionSort;
 pub use crate::merge_sort::MergeSort;
 pub use crate::quick_sort::QuickSort;
 pub use crate::dual_pivot_quicksort::DualPivotQuicksort;
+pub use crate::introsort::IntroSort;
 
 /// Trait for sorting algorithms.
 
