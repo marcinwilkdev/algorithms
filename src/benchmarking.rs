@@ -47,24 +47,26 @@ impl Benchmark for StandardBenchmarker {
     }
 
     fn start_timer(&mut self) {
-        assert!(self.timer.is_none(), "timer already started");
+        // assert!(self.timer.is_none(), "timer already started");
 
         self.timer = Some(Instant::now());
     }
 
     fn stop_timer(&mut self) {
-        assert!(self.timer.is_some(), "timer has to be started first");
+        // assert!(self.timer.is_some(), "timer has to be started first");
 
-        let now = Instant::now();
+        if self.timer.is_some() {
+            let now = Instant::now();
 
-        self.duration = Some(now - self.timer.unwrap());
+            self.duration = Some(now - self.timer.unwrap());
+        }
     }
 
     fn get_stats(&mut self) -> Stats {
-        assert!(self.duration.is_some(), "time wasn't measured yet");
+        // assert!(self.duration.is_some(), "time wasn't measured yet");
 
         Stats {
-            duration: self.duration.take().unwrap(),
+            duration: self.duration.unwrap_or_default(),
             swaps: self.swaps,
             comparisons: self.comparisons,
         }
