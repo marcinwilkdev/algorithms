@@ -99,6 +99,8 @@ impl MergeSort {
                 slice[i] = second_slice[second_slice_index];
                 second_slice_index += 1;
             }
+
+            benchmark.add_swap();
         }
     }
 }
@@ -138,7 +140,7 @@ impl BenchmarkingSorter for MergeSort {
     /// let stats = benchmarker.get_stats();
     ///
     /// assert_eq!(9, stats.comparisons);
-    /// assert_eq!(0, stats.swaps);
+    /// assert_eq!(16, stats.swaps);
     /// ```
     fn sort_with_benchmark<T: Ord + Copy>(slice: &mut [T], benchmark: &mut impl Benchmark) {
         benchmark.start_timer();
