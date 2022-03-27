@@ -26,26 +26,35 @@ fn main() {
         for _ in 0..k {
             let random_array = RandomGenerator::generate(n);
 
-            let mut insertion_benchmark = StandardBenchmarker::default();
             let mut merge_benchmark = StandardBenchmarker::default();
             let mut quick_benchmark = StandardBenchmarker::default();
 
-            InsertionSort::sort_with_benchmark(&mut random_array.clone(), &mut insertion_benchmark);
             MergeSort::sort_with_benchmark(&mut random_array.clone(), &mut merge_benchmark);
             QuickSort::sort_with_benchmark(&mut random_array.clone(), &mut quick_benchmark);
 
-            insertion_results.push(insertion_benchmark.get_stats());
             merge_results.push(merge_benchmark.get_stats());
             quick_results.push(quick_benchmark.get_stats());
+
+            if n < 500 {
+                let mut insertion_benchmark = StandardBenchmarker::default();
+                InsertionSort::sort_with_benchmark(
+                    &mut random_array.clone(),
+                    &mut insertion_benchmark,
+                );
+                insertion_results.push(insertion_benchmark.get_stats());
+            }
         }
 
-        let insertion_comps_and_swaps = get_avg_stats(&insertion_results, k);
         let merge_comps_and_swaps = get_avg_stats(&merge_results, k);
         let quick_comps_and_swaps = get_avg_stats(&quick_results, k);
 
-        insertion_final_stats.push(insertion_comps_and_swaps);
         merge_final_stats.push(merge_comps_and_swaps);
         quick_final_stats.push(quick_comps_and_swaps);
+
+        if n < 500 {
+            let insertion_comps_and_swaps = get_avg_stats(&insertion_results, k);
+            insertion_final_stats.push(insertion_comps_and_swaps);
+        }
     }
 
     print_final_stats_to_file("insertion", StatType::Comps, &insertion_final_stats);
