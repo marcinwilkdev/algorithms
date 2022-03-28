@@ -128,11 +128,17 @@ impl DualPivotQuicksort {
         benchmark: &mut impl Benchmark,
     ) -> (usize, usize) {
         if slice[0] > slice[slice.len() - 1] {
+            benchmark.add_swap();
             slice.swap(0, slice.len() - 1);
         }
 
+        benchmark.add_cmp();
+
         let left_pivot = slice[0];
         let right_pivot = slice[slice.len() - 1];
+
+        benchmark.add_swap(); // for pivots initialize
+        benchmark.add_swap();
 
         let mut next_smaller = 1;
         let mut next_larger = slice.len() - 2;
@@ -147,16 +153,20 @@ impl DualPivotQuicksort {
             if larger_count > smaller_count {
                 if slice[curr] > right_pivot {
                     while slice[next_larger] > right_pivot && next_larger > curr {
+                        benchmark.add_cmp();
                         next_larger -= 1;
                     }
+                    benchmark.add_cmp();
 
                     slice.swap(curr, next_larger);
                     benchmark.add_swap();
 
                     if slice[curr] < left_pivot {
+                        benchmark.add_swap();
                         slice.swap(curr, next_smaller);
                         next_smaller += 1;
                     }
+                    benchmark.add_cmp();
 
                     next_larger -= 1;
 
@@ -181,8 +191,10 @@ impl DualPivotQuicksort {
                 } else if slice[curr] > right_pivot {
                     benchmark.add_cmp();
                     while slice[next_larger] > right_pivot && next_larger > curr {
+                        benchmark.add_cmp();
                         next_larger -= 1;
                     }
+                    benchmark.add_cmp();
 
                     slice.swap(curr, next_larger);
                     benchmark.add_swap();
@@ -192,6 +204,7 @@ impl DualPivotQuicksort {
                         benchmark.add_swap();
                         next_smaller += 1;
                     }
+                    benchmark.add_cmp();
 
                     next_larger -= 1;
 
